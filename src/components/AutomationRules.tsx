@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Plus, Trash2, Power, Edit2 } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Plus, Trash2, Power } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { supabase } from "../lib/supabase";
 import { AutomationRule } from "../types";
@@ -7,7 +7,6 @@ import { AutomationRule } from "../types";
 export function AutomationRules() {
   const { user } = useAuth();
   const [rules, setRules] = useState<AutomationRule[]>([]);
-  const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     rule_name: "",
@@ -22,9 +21,9 @@ export function AutomationRules() {
 
   useEffect(() => {
     loadRules();
-  }, [user]);
+  }, [user, loadRules]);
 
-  async function loadRules() {
+  const loadRules = useCallback(async () => {
     if (!user) return;
 
     const { data, error } = await supabase
@@ -38,9 +37,7 @@ export function AutomationRules() {
     } else {
       setRules(data || []);
     }
-
-    setLoading(false);
-  }
+  }, [user]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -155,7 +152,7 @@ export function AutomationRules() {
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      condition_type: e.target.value as any,
+                      condition_type: e.target.value as "price_above" | "price_below" | "gas_fee_low",
                     })
                   }
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-cyan-400"

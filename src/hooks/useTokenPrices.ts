@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { TokenPrice } from "../types";
 
 type SymbolToIdMap = Record<string, string>; // SYMBOL (upper) -> coingecko id
+type CoinSearch = { symbol?: string; id: string };
 
 export function useTokenPrices() {
   const [prices, setPrices] = useState<Record<string, TokenPrice>>({});
@@ -23,7 +24,7 @@ export function useTokenPrices() {
           )
         );
         if (cancelled) return;
-        const merged = ([] as any[]).concat(...results);
+        const merged = results.flat();
         const nextPrices: Record<string, TokenPrice> = {};
         const nextMap: SymbolToIdMap = {};
         for (const c of merged) {
@@ -85,7 +86,7 @@ export function useTokenPrices() {
           };
         }
         setPrices(updated);
-      } catch (e) {
+      } catch {
         // silent refresh failure
       }
     }, 15000);
@@ -106,7 +107,7 @@ export function useTokenPrices() {
           sym
         )}`
       ).then((r) => r.json());
-      const coins = (search?.coins as any[]) || [];
+      const coins = (search?.coins as CoinSearch[]) || [];
       const exact = coins.find(
         (c) => String(c.symbol || "").toUpperCase() === sym
       );

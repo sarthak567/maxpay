@@ -5,7 +5,7 @@ export default {
     extend: {
       fontFamily: {
         sans: [
-          "Space Grotesk",
+          "Sora",
           "ui-sans-serif",
           "system-ui",
           "Segoe UI",

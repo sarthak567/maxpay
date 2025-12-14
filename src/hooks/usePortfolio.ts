@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { Portfolio } from '../types';
 import { useAuth } from '../context/AuthContext';
@@ -13,9 +13,9 @@ export function usePortfolio() {
     if (user) {
       loadPortfolio();
     }
-  }, [user]);
+  }, [user, loadPortfolio]);
 
-  async function loadPortfolio() {
+  const loadPortfolio = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('portfolios')
@@ -33,7 +33,7 @@ export function usePortfolio() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [user]);
 
   async function updatePortfolioItem(tokenSymbol: string, balance: number, usdValue: number) {
     if (!user) return;

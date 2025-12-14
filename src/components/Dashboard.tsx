@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Brain,
   TrendingUp,
@@ -17,7 +17,6 @@ import { SwapHistory } from "./SwapHistory";
 import { AutomationRules } from "./AutomationRules";
 import { ProfileSettings } from "./ProfileSettings";
 import { Watchlist } from "./Watchlist";
-import { Leaderboard } from "./Leaderboard";
 import { usePortfolio } from "../hooks/usePortfolio";
 import { useTokenPrices } from "../hooks/useTokenPrices";
 import { supabase } from "../lib/supabase";
@@ -25,60 +24,18 @@ import { supabase } from "../lib/supabase";
 export function Dashboard() {
   const { user, profile, signOut } = useAuth();
   const [activeTab, setActiveTab] = useState<
-    | "portfolio"
-    | "watchlist"
-    | "leaderboard"
-    | "chat"
-    | "history"
-    | "automation"
-    | "settings"
+    "portfolio" | "chat" | "history" | "automation" | "settings"
   >("portfolio");
   const { portfolio, refreshPortfolio } = usePortfolio();
-  const { getPrice, prices } = useTokenPrices();
-
-  // Curated list of major coins for Quick Swap (top ~30)
-  const SWAP_COINS = [
-    "BTC",
-    "ETH",
-    "USDT",
-    "USDC",
-    "BNB",
-    "SOL",
-    "XRP",
-    "ADA",
-    "DOGE",
-    "TRX",
-    "TON",
-    "DOT",
-    "AVAX",
-    "MATIC",
-    "LINK",
-    "BCH",
-    "LTC",
-    "XLM",
-    "APT",
-    "ARB",
-    "OP",
-    "ATOM",
-    "ETC",
-    "NEAR",
-    "FIL",
-    "ICP",
-    "HBAR",
-    "SUI",
-    "AAVE",
-    "INJ",
-  ];
+  const { getPrice } = useTokenPrices();
 
   const [quickSwapOpen, setQuickSwapOpen] = useState(false);
-  const [fromToken, setFromToken] = useState("ETH" as string);
-  const [toToken, setToToken] = useState("USDT" as string);
-
-  useEffect(() => {
-    // Ensure defaults are part of curated list
-    if (!SWAP_COINS.includes(fromToken)) setFromToken("ETH");
-    if (!SWAP_COINS.includes(toToken)) setToToken("USDT");
-  }, [fromToken, toToken]);
+  const [fromToken, setFromToken] = useState<
+    "BTC" | "ETH" | "MATIC" | "SOL" | "BNB" | "USDC"
+  >("ETH");
+  const [toToken, setToToken] = useState<
+    "BTC" | "ETH" | "MATIC" | "SOL" | "BNB" | "USDC"
+  >("USDC");
   const [percentage, setPercentage] = useState(20);
   const [swapping, setSwapping] = useState(false);
   const [gas, setGas] = useState<{
@@ -99,7 +56,6 @@ export function Dashboard() {
   const tabs = [
     { id: "portfolio" as const, label: "Portfolio", icon: TrendingUp },
     { id: "watchlist" as const, label: "Watchlist", icon: Star },
-    { id: "leaderboard" as const, label: "Leaderboard", icon: Brain },
     { id: "chat" as const, label: "AI Chat", icon: MessageSquare },
     { id: "history" as const, label: "History", icon: History },
     { id: "automation" as const, label: "Automation", icon: Zap },
@@ -116,7 +72,7 @@ export function Dashboard() {
                 <Brain className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-white">maxpay</h1>
+                <h1 className="text-xl font-bold text-white">ShiftMind</h1>
                 <p className="text-sm text-cyan-300">
                   {profile?.ai_name || "Your AI Assistant"}
                 </p>
@@ -195,7 +151,6 @@ export function Dashboard() {
       <main className="container mx-auto px-6 py-8">
         {activeTab === "portfolio" && <PortfolioOverview />}
         {activeTab === "watchlist" && <Watchlist />}
-        {activeTab === "leaderboard" && <Leaderboard />}
         {activeTab === "chat" && <AIChat />}
         {activeTab === "history" && <SwapHistory />}
         {activeTab === "automation" && <AutomationRules />}
@@ -215,9 +170,9 @@ export function Dashboard() {
                   <select
                     value={fromToken}
                     onChange={(e) => setFromToken(e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-800/80 border border-white/20 rounded-lg text-white focus:outline-none"
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white"
                   >
-                    {SWAP_COINS.map((t) => (
+                    {["BTC", "ETH", "MATIC", "SOL", "BNB", "USDC"].map((t) => (
                       <option key={t} value={t}>
                         {t}
                       </option>
@@ -231,13 +186,15 @@ export function Dashboard() {
                   <select
                     value={toToken}
                     onChange={(e) => setToToken(e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-800/80 border border-white/20 rounded-lg text-white focus:outline-none"
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white"
                   >
-                    {SWAP_COINS.filter((t) => t !== fromToken).map((t) => (
-                      <option key={t} value={t}>
-                        {t}
-                      </option>
-                    ))}
+                    {["BTC", "ETH", "MATIC", "SOL", "BNB", "USDC"]
+                      .filter((t) => t !== fromToken)
+                      .map((t) => (
+                        <option key={t} value={t}>
+                          {t}
+                        </option>
+                      ))}
                   </select>
                 </div>
               </div>
@@ -301,38 +258,15 @@ export function Dashboard() {
                 </button>
                 <button
                   onClick={async () => {
-                    if (!user) {
-                      alert("Please sign in to perform a swap.");
-                      return;
-                    }
-                    if (fromToken === toToken) {
-                      alert("From and To tokens must be different.");
-                      return;
-                    }
-                    const pct = Number(percentage);
-                    if (!isFinite(pct) || pct <= 0 || pct > 100) {
-                      alert("Enter a valid percentage between 1 and 100.");
-                      return;
-                    }
+                    if (!user) return;
                     const from = portfolio.find(
                       (p) => p.token_symbol === fromToken
                     );
-                    if (!from) {
-                      alert(`You don't hold ${fromToken}.`);
-                      return;
-                    }
+                    if (!from || percentage <= 0 || percentage > 100) return;
                     const fromPrice = getPrice(fromToken)?.price || 0;
-                    const toPrice = getPrice(toToken)?.price || 0;
-                    if (fromPrice <= 0 || toPrice <= 0) {
-                      alert("Price data unavailable. Try again shortly.");
-                      return;
-                    }
-                    const maxFrom = Number(from.balance);
-                    const fromAmount = (maxFrom * pct) / 100;
-                    if (fromAmount <= 0 || fromAmount > maxFrom) {
-                      alert("Invalid amount to swap.");
-                      return;
-                    }
+                    const toPrice = getPrice(toToken)?.price || 1;
+                    const fromAmount =
+                      (Number(from.balance) * percentage) / 100;
                     const usdValue = fromAmount * fromPrice;
                     const gasFee = Math.max(0.5, Math.random() * 3);
                     const toAmount = usdValue / toPrice;
@@ -374,9 +308,6 @@ export function Dashboard() {
                       });
                       await refreshPortfolio();
                       setQuickSwapOpen(false);
-                    } catch (e) {
-                      console.error(e);
-                      alert("Swap failed. Please try again.");
                     } finally {
                       setSwapping(false);
                     }

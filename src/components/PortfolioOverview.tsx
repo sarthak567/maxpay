@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   TrendingUp,
   TrendingDown,
@@ -14,7 +14,7 @@ import { AIInsight } from "../types";
 
 export function PortfolioOverview() {
   const { portfolio, loading, totalValue, refreshPortfolio } = usePortfolio();
-  const { prices, getPrice } = useTokenPrices();
+  const { getPrice } = useTokenPrices();
   const { user, profile } = useAuth();
   const [insights, setInsights] = useState<AIInsight[]>([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -30,9 +30,9 @@ export function PortfolioOverview() {
 
   useEffect(() => {
     loadInsights();
-  }, [user]);
+  }, [user, loadInsights]);
 
-  async function loadInsights() {
+  const loadInsights = useCallback(async () => {
     if (!user) return;
 
     const { data } = await supabase
@@ -44,7 +44,7 @@ export function PortfolioOverview() {
       .limit(3);
 
     setInsights(data || []);
-  }
+  }, [user]);
 
   async function handleRefresh() {
     setRefreshing(true);
@@ -336,7 +336,7 @@ export function PortfolioOverview() {
                 </label>
                 <select
                   value={swapTo}
-                  onChange={(e) => setSwapTo(e.target.value as any)}
+                  onChange={(e) => setSwapTo(e.target.value as "USDC" | "ETH" | "BTC" | "MATIC")}
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white"
                 >
                   {["USDC", "ETH", "BTC", "MATIC"]

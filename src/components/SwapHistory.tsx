@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   ArrowRight,
   TrendingUp,
@@ -23,9 +23,9 @@ export function SwapHistory() {
 
   useEffect(() => {
     loadHistory();
-  }, [user, filter]);
+  }, [user, filter, loadHistory]);
 
-  async function loadHistory() {
+  const loadHistory = useCallback(async () => {
     if (!user) return;
 
     let query = supabase
@@ -47,7 +47,7 @@ export function SwapHistory() {
     }
 
     setLoading(false);
-  }
+  }, [user, filter]);
 
   function getStatusIcon(status: string) {
     switch (status) {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Send, Bot, User } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { supabase } from "../lib/supabase";
@@ -15,13 +15,13 @@ export function AIChat() {
 
   useEffect(() => {
     loadMessages();
-  }, [user]);
+  }, [user, loadMessages]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  async function loadMessages() {
+  const loadMessages = useCallback(async () => {
     if (!user) return;
 
     const { data } = await supabase
@@ -39,13 +39,13 @@ export function AIChat() {
         user_id: user.id,
         role: "assistant",
         content: `Hi! I'm ${
-          profile?.ai_name || "ShiftMind"
+          profile?.ai_name || "X PAY Assistant"
         }, your AI crypto assistant. I can help you:\n\n• Analyze market trends\n• Suggest optimal swap timings\n• Answer questions about your portfolio\n• Set up automation rules\n\nWhat would you like to know?`,
         created_at: new Date().toISOString(),
       };
       setMessages([welcomeMessage]);
     }
-  }
+  }, [user, profile?.ai_name]);
 
   async function generateAIResponse(userMessage: string): Promise<string> {
     const lowerMessage = userMessage.toLowerCase();

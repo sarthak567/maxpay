@@ -45,7 +45,7 @@ export function LandingPage() {
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-cyan-500/10 animate-float">
               <Brain className="w-6 h-6 text-white" />
             </div>
-            <span className="text-2xl font-bold text-white">maxpay</span>
+            <span className="text-2xl font-bold text-white">X PAY</span>
           </div>
           <button
             onClick={() => setShowAuth(!showAuth)}
@@ -181,8 +181,8 @@ export function LandingPage() {
                     100% Non-Custodial
                   </h3>
                   <p className="text-slate-300 text-lg">
-                    Your wallet, your keys, your crypto. maxpay never holds your
-                    assets. We only suggest and execute swaps with your
+                    Your wallet, your keys, your crypto. ShiftMind never holds
+                    your assets. We only suggest and execute swaps with your
                     approval, directly through your wallet.
                   </p>
                 </div>
@@ -207,7 +207,7 @@ export function LandingPage() {
 
         <footer className="container mx-auto px-6 py-12 border-t border-white/10">
           <div className="text-center text-slate-400">
-            <p>maxpay - AI-Powered Crypto Portfolio Management</p>
+            <p>ShiftMind - AI-Powered Crypto Portfolio Management</p>
             <p className="text-sm mt-2">
               Built with Supabase, React, and SideShift API
             </p>

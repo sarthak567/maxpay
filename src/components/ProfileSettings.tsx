@@ -17,7 +17,7 @@ export function ProfileSettings() {
   useEffect(() => {
     if (profile) {
       setFormData({
-        ai_name: profile.ai_name || "maxpay",
+        ai_name: profile.ai_name || "ShiftMind",
         risk_preference: profile.risk_preference || "moderate",
         auto_mode_enabled: profile.auto_mode_enabled || false,
         email_notifications: profile.notification_preferences?.email ?? true,
@@ -56,7 +56,7 @@ export function ProfileSettings() {
     <div className="max-w-3xl mx-auto space-y-6">
       <div>
         <h2 className="text-3xl font-bold text-white mb-2">Settings</h2>
-        <p className="text-slate-400">Customize your maxpay experience</p>
+        <p className="text-slate-400">Customize your ShiftMind experience</p>
       </div>
 
       <div className="card p-8">
@@ -72,7 +72,7 @@ export function ProfileSettings() {
                 setFormData({ ...formData, ai_name: e.target.value })
               }
               className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-cyan-400"
-              placeholder="e.g., Nova, Athena, maxpay"
+              placeholder="e.g., Nova, Athena, ShiftMind"
             />
             <p className="mt-2 text-sm text-slate-400">
               Give your AI assistant a personal name
@@ -103,7 +103,7 @@ export function ProfileSettings() {
                   onClick={() =>
                     setFormData({
                       ...formData,
-                      risk_preference: option.value as any,
+                      risk_preference: option.value as "conservative" | "moderate" | "aggressive",
                     })
                   }
                   className={`p-4 rounded-lg border transition-all ${

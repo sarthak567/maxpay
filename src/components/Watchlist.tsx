@@ -3,7 +3,7 @@ import { Star, Plus, Trash2 } from "lucide-react";
 import { useTokenPrices } from "../hooks/useTokenPrices";
 
 export function Watchlist() {
-  const { prices, getPrice, addSymbol } = useTokenPrices();
+  const { getPrice } = useTokenPrices();
   const [tokens, setTokens] = useState<string[]>(["BTC", "ETH", "MATIC"]);
   const [input, setInput] = useState("");
 
@@ -13,7 +13,9 @@ export function Watchlist() {
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed)) setTokens(parsed);
-      } catch {}
+      } catch {
+        // Ignore invalid JSON
+      }
     }
   }, []);
 
@@ -21,22 +23,10 @@ export function Watchlist() {
     localStorage.setItem("shiftmind_watchlist", JSON.stringify(tokens));
   }, [tokens]);
 
-  async function addToken() {
-    const raw = input.trim();
-    const sym = raw.toUpperCase();
+  function addToken() {
+    const sym = input.trim().toUpperCase();
     if (!sym) return;
-    let price = getPrice(sym);
-    let finalSym = sym;
-    if (!price) {
-      const resolved = await addSymbol(raw);
-      if (!resolved) {
-        alert(`${raw} not found. Try a different symbol or full name.`);
-        return;
-      }
-      finalSym = resolved;
-      price = getPrice(finalSym);
-    }
-    if (!tokens.includes(finalSym)) setTokens((t) => [...t, finalSym]);
+    if (!tokens.includes(sym)) setTokens((t) => [...t, sym]);
     setInput("");
   }
 
@@ -56,7 +46,7 @@ export function Watchlist() {
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Add token or name (e.g., SOL or Cardano)"
+            placeholder="Add token (e.g., SOL)"
             className="px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-cyan-400"
           />
           <button
@@ -85,22 +75,11 @@ export function Watchlist() {
                   className="p-6 flex items-center justify-between hover:bg-white/5 transition-colors"
                 >
                   <div className="flex items-center gap-4">
-                    {p?.image ? (
-                      <img
-                        src={p.image}
-                        alt={p?.name || sym}
-                        className="w-10 h-10 rounded-lg object-cover bg-white/10"
-                      />
-                    ) : (
-                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
-                        <span className="text-white font-semibold">{sym}</span>
-                      </div>
-                    )}
+                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
+                      <span className="text-white font-semibold">{sym}</span>
+                    </div>
                     <div>
-                      <div className="text-white font-semibold">
-                        {p?.name || sym}
-                      </div>
-                      <div className="text-xs text-slate-500">{sym}</div>
+                      <div className="text-white font-semibold">{sym}</div>
                       <div className="text-sm text-slate-400">
                         24h: {change >= 0 ? "+" : ""}
                         {Math.abs(change).toFixed(2)}%
