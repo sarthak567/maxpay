@@ -13,14 +13,6 @@ export function AIChat() {
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    loadMessages();
-  }, [user, loadMessages]);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
   const loadMessages = useCallback(async () => {
     if (!user) return;
 
@@ -46,6 +38,14 @@ export function AIChat() {
       setMessages([welcomeMessage]);
     }
   }, [user, profile?.ai_name]);
+
+  useEffect(() => {
+    loadMessages();
+  }, [user, loadMessages]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   async function generateAIResponse(userMessage: string): Promise<string> {
     const lowerMessage = userMessage.toLowerCase();

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Brain,
   TrendingUp,
@@ -24,7 +24,7 @@ import { supabase } from "../lib/supabase";
 export function Dashboard() {
   const { user, profile, signOut } = useAuth();
   const [activeTab, setActiveTab] = useState<
-    "portfolio" | "chat" | "history" | "automation" | "settings"
+    "portfolio" | "chat" | "history" | "automation" | "settings" | "watchlist"
   >("portfolio");
   const { portfolio, refreshPortfolio } = usePortfolio();
   const { getPrice } = useTokenPrices();
@@ -72,7 +72,7 @@ export function Dashboard() {
                 <Brain className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-white">ShiftMind</h1>
+                <h1 className="text-xl font-bold text-white">X PAY</h1>
                 <p className="text-sm text-cyan-300">
                   {profile?.ai_name || "Your AI Assistant"}
                 </p>
@@ -169,7 +169,7 @@ export function Dashboard() {
                   </label>
                   <select
                     value={fromToken}
-                    onChange={(e) => setFromToken(e.target.value)}
+                    onChange={(e) => setFromToken(e.target.value as "BTC" | "ETH" | "MATIC" | "SOL" | "BNB" | "USDC")}
                     className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white"
                   >
                     {["BTC", "ETH", "MATIC", "SOL", "BNB", "USDC"].map((t) => (
@@ -185,7 +185,7 @@ export function Dashboard() {
                   </label>
                   <select
                     value={toToken}
-                    onChange={(e) => setToToken(e.target.value)}
+                    onChange={(e) => setToToken(e.target.value as "BTC" | "ETH" | "MATIC" | "SOL" | "BNB" | "USDC")}
                     className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white"
                   >
                     {["BTC", "ETH", "MATIC", "SOL", "BNB", "USDC"]

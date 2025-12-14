@@ -21,10 +21,6 @@ export function SwapHistory() {
     "all" | "completed" | "pending" | "failed"
   >("all");
 
-  useEffect(() => {
-    loadHistory();
-  }, [user, filter, loadHistory]);
-
   const loadHistory = useCallback(async () => {
     if (!user) return;
 
@@ -48,6 +44,10 @@ export function SwapHistory() {
 
     setLoading(false);
   }, [user, filter]);
+
+  useEffect(() => {
+    loadHistory();
+  }, [user, filter, loadHistory]);
 
   function getStatusIcon(status: string) {
     switch (status) {

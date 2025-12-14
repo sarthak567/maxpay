@@ -10,7 +10,7 @@ export function AutomationRules() {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     rule_name: "",
-    condition_type: "price_above" as const,
+    condition_type: "price_above" as "price_above" | "price_below" | "gas_fee_low",
     token_symbol: "BTC",
     threshold_value: 0,
     action_type: "swap" as const,
@@ -18,10 +18,6 @@ export function AutomationRules() {
     to_token: "USDC",
     percentage: 10,
   });
-
-  useEffect(() => {
-    loadRules();
-  }, [user, loadRules]);
 
   const loadRules = useCallback(async () => {
     if (!user) return;
@@ -38,6 +34,10 @@ export function AutomationRules() {
       setRules(data || []);
     }
   }, [user]);
+
+  useEffect(() => {
+    loadRules();
+  }, [user, loadRules]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

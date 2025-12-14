@@ -9,12 +9,6 @@ export function usePortfolio() {
   const [loading, setLoading] = useState(true);
   const [totalValue, setTotalValue] = useState(0);
 
-  useEffect(() => {
-    if (user) {
-      loadPortfolio();
-    }
-  }, [user, loadPortfolio]);
-
   const loadPortfolio = useCallback(async () => {
     try {
       const { data, error } = await supabase
@@ -34,6 +28,12 @@ export function usePortfolio() {
       setLoading(false);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      loadPortfolio();
+    }
+  }, [user, loadPortfolio]);
 
   async function updatePortfolioItem(tokenSymbol: string, balance: number, usdValue: number) {
     if (!user) return;

@@ -28,10 +28,6 @@ export function PortfolioOverview() {
   const [swapPct, setSwapPct] = useState(20);
   const [swapping, setSwapping] = useState(false);
 
-  useEffect(() => {
-    loadInsights();
-  }, [user, loadInsights]);
-
   const loadInsights = useCallback(async () => {
     if (!user) return;
 
@@ -45,6 +41,10 @@ export function PortfolioOverview() {
 
     setInsights(data || []);
   }, [user]);
+
+  useEffect(() => {
+    loadInsights();
+  }, [user, loadInsights]);
 
   async function handleRefresh() {
     setRefreshing(true);
